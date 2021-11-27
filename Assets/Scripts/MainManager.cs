@@ -18,16 +18,13 @@ public class MainManager : MonoBehaviour
     private bool m_Started = false;
     private string m_Playername;
     private int m_Points;
-    private int m_Highscore;
-    private string m_HighscoreName;
     
     private bool m_GameOver = false;
-    private const string HIGHSCORE_FILE = "highscore.json";
 
     void Start()
     {
         // load highscore
-        LoadHighscore();
+        //LoadHighscore();
         UpdateHighscoreText();
 
         if (MenuController.Instance != null)
@@ -83,53 +80,33 @@ public class MainManager : MonoBehaviour
 
     void UpdateHighscoreText()
     {
-        HighScoreText.text = $"Best score : {m_HighscoreName} : {m_Highscore}";
+        if (MenuController.Instance != null)
+        {
+            HighScoreText.text = $"Best score : {MenuController.Instance.HighscoreName} : {MenuController.Instance.Highscore}";
+        }
     }
 
     public void GameOver()
     {
         m_GameOver = true;
 
-        if (m_Points > m_Highscore)
+        if (MenuController.Instance != null)
         {
-            m_Highscore = m_Points;
-            m_HighscoreName = m_Playername;
-
-            UpdateHighscoreText();
-            SaveHighscore();
+            MenuController.Instance.NewScore(m_Points);
         }
+
+        UpdateHighscoreText();
 
         GameOverText.SetActive(true);
     }
 
+    /*
     void LoadHighscore()
     {
-        string path = Path.Combine(Application.persistentDataPath, HIGHSCORE_FILE);
-        if (File.Exists(path))
+        if (MenuController.Instance != null)
         {
-            string json = File.ReadAllText(path);
-
-            HighscoreData data = JsonUtility.FromJson<HighscoreData>(json);
-
-            m_Highscore = data.Highscore;
-            m_HighscoreName = data.Playername;
+            MenuController.Instance.LoadHighscores();
         }
     }
-
-    void SaveHighscore()
-    {
-        HighscoreData data = new HighscoreData();
-        data.Highscore = m_Highscore;
-        data.Playername = m_HighscoreName;
-
-        string json = JsonUtility.ToJson(data);
-
-        File.WriteAllText(Path.Combine(Application.persistentDataPath, HIGHSCORE_FILE), json);
-    }
-
-    private class HighscoreData
-    {
-        public int Highscore;
-        public string Playername;
-    }
+    */
 }
